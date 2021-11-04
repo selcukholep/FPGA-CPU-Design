@@ -1,0 +1,16 @@
+/db
+*.qpf
+*.qsf
+*.qws
+/output_files
+/incremental_db
+*.rpt
+*/*.bak
+*.bak
+*.smf
+*.qdb
+*.qpg
+*.qt1
+*_vmake
+*.wlf
+/simulation/modelsim

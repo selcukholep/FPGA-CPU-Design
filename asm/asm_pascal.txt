@@ -1,0 +1,58 @@
+[CODE]
+
+process:
+    
+    MOV R0, 3FH
+    MOV R1, R0
+    
+    MOV R2, 40H
+    
+    SUB R0, R0          -- Set AL as Previous Temp Value (Initial Zero)
+    
+    MOV R3, 500h        -- Allocate 500h location to store next_line data temporarly.
+    PUSH R3             -- Store First R3 location.
+    
+    MOV R4, 10          -- Count of line.
+    
+    MOV R10, 1
+    STORE R3, R10         -- Start temporary data with 1
+    
+process_line:
+  
+    POP R3              -- Pop R3 to return first temp location.
+    PUSH R3             -- Store First R3 location again.
+    PUSH R2             -- Store R2 Initial offset location to start with next block.
+    
+    SUB R0, R0          -- Refresh Previous Temp Value as 0.
+    
+    current_line_loop:  -- Start write current line values.
+    
+        LOAD R8, R3
+        CMP R8, 0   
+        JZ current_line_last    -- Break if current line has finished.
+        
+        LOAD R5, R3            -- Store [BX] byte value temporarly on DL
+        STORE R2, R5           -- Set current pointer as R5
+        INC R2                  -- Go to next pointer.
+        LOAD R9, R3
+        ADD R9, R0
+        STORE R3, R9           -- Add to temp data, previous temp value. To prepare next line. 
+        INC R3
+        
+        MOV R0, R5
+        
+        JMP current_line_loop
+           
+    current_line_last:
+    
+        STORE R3, R10       -- Set temp data as 1 because of the line's last values already 1.
+        POP R2
+        ADD R2, 10h             -- Pass to next line.
+        
+        DEC R4
+        
+        CMP R4, 0
+        JG process_line     -- To process next line, jump process_line.
+
+POP R3
+HLT
